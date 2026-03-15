@@ -8,10 +8,10 @@ const defaults: AppSettings = { defaultModel: "", shellAllowList: "recommended",
 export async function POST(req: Request) {
   try {
     await requireAuth();
-    const { task } = await req.json();
+    const { task, agent } = await req.json();
     if (!task) return NextResponse.json({ ok: false, error: "Task manquante" }, { status: 400 });
     const settings = await readJsonFile<AppSettings>("settings.json", defaults);
-    const out = await runOneShot(task, settings);
+    const out = await runOneShot(task, settings, { agent });
     return NextResponse.json({ ok: true, ...out });
   } catch (e) {
     if (e instanceof Error && e.message === "UNAUTHORIZED") return NextResponse.json({ ok: false }, { status: 401 });

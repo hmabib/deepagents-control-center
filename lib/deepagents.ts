@@ -21,8 +21,9 @@ export type BgSession = {
 
 const sessions = new Map<string, BgSession>();
 
-function buildArgs(base: string[], settings?: Partial<AppSettings>) {
+function buildArgs(base: string[], settings?: Partial<AppSettings>, opts?: { agent?: string }) {
   const args = [...base];
+  if (opts?.agent) args.push("--agent", opts.agent);
   if (settings?.defaultModel) args.push("--model", settings.defaultModel);
   if (settings?.shellAllowList) args.push("--shell-allow-list", settings.shellAllowList);
   if (settings?.autoApprove) args.push("--auto-approve");
@@ -59,16 +60,16 @@ export async function runSkillDelete(name: string) {
   return { stdout, stderr };
 }
 
-export async function runOneShot(task: string, settings?: Partial<AppSettings>) {
-  const args = buildArgs(["-n", task], settings);
+export async function runOneShot(task: string, settings?: Partial<AppSettings>, opts?: { agent?: string }) {
+  const args = buildArgs(["-n", task], settings, opts);
   const cmd = ["deepagents", ...args.map((a) => JSON.stringify(a))].join(" ");
   const { stdout, stderr } = await exec(cmd, { maxBuffer: 8 * 1024 * 1024 });
   return { stdout, stderr, cmd };
 }
 
-export function runBackground(task: string, settings?: Partial<AppSettings>) {
+export function runBackground(task: string, settings?: Partial<AppSettings>, opts?: { agent?: string }) {
   const id = `sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-  const args = buildArgs(["-n", task], settings);
+  const args = buildArgs(["-n", task], settings, opts);
   const child = spawn("deepagents", args, { stdio: ["ignore", "pipe", "pipe"] });
 
   const state: BgSession = {

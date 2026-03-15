@@ -5,6 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 
 const links = [
   ["/dashboard", "Tableau de bord"],
+  ["/agents", "Agents"],
+  ["/crons", "Crons"],
+  ["/providers", "Providers"],
   ["/templates", "Templates"],
   ["/threads", "Threads"],
   ["/skills", "Skills"],

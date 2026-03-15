@@ -8,6 +8,7 @@ export default function DashboardPage() {
   const [agents, setAgents] = useState("");
   const [task, setTask] = useState("");
   const [result, setResult] = useState("");
+  const [agent, setAgent] = useState("");
   const [sessions, setSessions] = useState<BgSession[]>([]);
 
   async function loadAgents() {
@@ -33,7 +34,7 @@ export default function DashboardPage() {
     const res = await fetch("/api/deepagents/oneshot", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ task }),
+      body: JSON.stringify({ task, agent }),
     });
     const data = await res.json();
     setResult((data.stdout || data.stderr || data.error || "").toString());
@@ -43,7 +44,7 @@ export default function DashboardPage() {
     await fetch("/api/deepagents/sessions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ task }),
+      body: JSON.stringify({ task, agent }),
     });
     await loadSessions();
   }
@@ -59,6 +60,7 @@ export default function DashboardPage() {
 
       <section className="rounded-xl bg-white p-4 shadow-sm">
         <h2 className="mb-2 font-medium">Exécuter une tâche</h2>
+        <input value={agent} onChange={(e) => setAgent(e.target.value)} className="mb-2 w-full rounded border p-2" placeholder="Agent (optionnel, ex: coder)" />
         <textarea value={task} onChange={(e) => setTask(e.target.value)} rows={4} className="w-full rounded border p-2" placeholder="Décris la tâche DeepAgent..." />
         <div className="mt-2 flex gap-2">
           <button onClick={runOneShot} className="rounded bg-zinc-900 px-3 py-2 text-white">Run one-shot</button>

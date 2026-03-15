@@ -3,6 +3,9 @@
 Plateforme UI/UX (Next.js + TypeScript) pour piloter `deepagents` visuellement :
 - exécution one-shot
 - sessions en arrière-plan + logs
+- gestion agents (catalogue, rôle, modèle, prompt système)
+- gestion crons (expression, agent cible, prompt, run immédiat)
+- gestion providers (catalogue de configuration)
 - gestion templates (ajout/modification/suppression)
 - réglages globaux (modèle, shell allow list, auto-approve)
 - gestion threads et skills
@@ -54,5 +57,6 @@ Configurer `ADMIN_PASSWORD` dans les variables d'environnement Vercel.
 
 ## 7) Limites MVP
 - Sessions arrière-plan conservées en mémoire (redémarrage = reset)
+- Cron scheduler en mémoire (parfait sur VPS `next start`; en Vercel serverless, comportement non garanti)
 - Pas de RBAC multi-utilisateur
 - parsing des sorties CLI principalement textuel
