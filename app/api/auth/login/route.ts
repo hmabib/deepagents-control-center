@@ -4,7 +4,10 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const { password } = await req.json();
-  if (!password || password !== getAdminPassword()) {
+  const received = String(password ?? "").trim();
+  const expected = String(getAdminPassword() ?? "").trim();
+
+  if (!received || !expected || received !== expected) {
     return NextResponse.json({ ok: false, error: "Mot de passe invalide" }, { status: 401 });
   }
 
