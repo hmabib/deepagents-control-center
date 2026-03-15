@@ -8,6 +8,8 @@ const links = [
   ["/agents", "Agents"],
   ["/crons", "Crons"],
   ["/providers", "Providers"],
+  ["/models", "Modèles"],
+  ["/integrations", "Intégrations"],
   ["/templates", "Templates"],
   ["/threads", "Threads"],
   ["/skills", "Skills"],

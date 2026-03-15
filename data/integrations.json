@@ -1,0 +1,25 @@
+[
+  {
+    "id": "langsmith",
+    "name": "LangSmith",
+    "type": "observability",
+    "config": {
+      "endpoint": "https://api.smith.langchain.com",
+      "envKey": "LANGSMITH_API_KEY",
+      "projectEnv": "LANGSMITH_PROJECT",
+      "tracingEnv": "LANGSMITH_TRACING"
+    },
+    "enabled": true
+  },
+  {
+    "id": "mcp-default",
+    "name": "MCP Server",
+    "type": "mcp",
+    "config": {
+      "transport": "http",
+      "url": "",
+      "tokenEnv": "MCP_TOKEN"
+    },
+    "enabled": false
+  }
+]
