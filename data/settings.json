@@ -1,5 +1,7 @@
 {
-  "defaultModel": "",
+  "defaultModel": "gpt-5",
+  "defaultProvider": "openai",
+  "defaultBaseUrl": "",
   "shellAllowList": "recommended",
   "autoApprove": false
 }

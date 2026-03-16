@@ -5,6 +5,8 @@ const exec = promisify(execCb);
 
 export type AppSettings = {
   defaultModel: string;
+  defaultProvider?: string;
+  defaultBaseUrl?: string;
   shellAllowList: string;
   autoApprove: boolean;
 };
@@ -21,10 +23,11 @@ export type BgSession = {
 
 const sessions = new Map<string, BgSession>();
 
-function buildArgs(base: string[], settings?: Partial<AppSettings>, opts?: { agent?: string }) {
+function buildArgs(base: string[], settings?: Partial<AppSettings>, opts?: { agent?: string; model?: string }) {
   const args = [...base];
   if (opts?.agent) args.push("--agent", opts.agent);
-  if (settings?.defaultModel) args.push("--model", settings.defaultModel);
+  const selectedModel = opts?.model || settings?.defaultModel;
+  if (selectedModel) args.push("--model", selectedModel);
   if (settings?.shellAllowList) args.push("--shell-allow-list", settings.shellAllowList);
   if (settings?.autoApprove) args.push("--auto-approve");
   return args;
@@ -60,14 +63,14 @@ export async function runSkillDelete(name: string) {
   return { stdout, stderr };
 }
 
-export async function runOneShot(task: string, settings?: Partial<AppSettings>, opts?: { agent?: string }) {
+export async function runOneShot(task: string, settings?: Partial<AppSettings>, opts?: { agent?: string; model?: string }) {
   const args = buildArgs(["-n", task], settings, opts);
   const cmd = ["deepagents", ...args.map((a) => JSON.stringify(a))].join(" ");
   const { stdout, stderr } = await exec(cmd, { maxBuffer: 8 * 1024 * 1024 });
   return { stdout, stderr, cmd };
 }
 
-export function runBackground(task: string, settings?: Partial<AppSettings>, opts?: { agent?: string }) {
+export function runBackground(task: string, settings?: Partial<AppSettings>, opts?: { agent?: string; model?: string }) {
   const id = `sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
   const args = buildArgs(["-n", task], settings, opts);
   const child = spawn("deepagents", args, { stdio: ["ignore", "pipe", "pipe"] });

@@ -3,7 +3,13 @@ import { AppSettings } from "@/lib/deepagents";
 import { readJsonFile, writeJsonFile } from "@/lib/storage";
 import { NextResponse } from "next/server";
 
-const defaults: AppSettings = { defaultModel: "", shellAllowList: "recommended", autoApprove: false };
+const defaults: AppSettings = {
+  defaultModel: "",
+  defaultProvider: "",
+  defaultBaseUrl: "",
+  shellAllowList: "recommended",
+  autoApprove: false,
+};
 
 export async function GET() {
   try {
@@ -22,6 +28,8 @@ export async function PUT(req: Request) {
     const body = await req.json();
     const next: AppSettings = {
       defaultModel: body.defaultModel || "",
+      defaultProvider: body.defaultProvider || "",
+      defaultBaseUrl: body.defaultBaseUrl || "",
       shellAllowList: body.shellAllowList || "recommended",
       autoApprove: Boolean(body.autoApprove),
     };

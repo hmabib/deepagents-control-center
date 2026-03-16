@@ -3,12 +3,15 @@
 import { useEffect, useState } from "react";
 
 type BgSession = { id: string; status: string; startedAt: string; output: string; command: string };
+type ModelDef = { id: string; provider: string; label: string; model: string; enabled: boolean };
 
 export default function DashboardPage() {
   const [agents, setAgents] = useState("");
   const [task, setTask] = useState("");
   const [result, setResult] = useState("");
   const [agent, setAgent] = useState("");
+  const [model, setModel] = useState("");
+  const [models, setModels] = useState<ModelDef[]>([]);
   const [sessions, setSessions] = useState<BgSession[]>([]);
 
   async function loadAgents() {
@@ -23,9 +26,16 @@ export default function DashboardPage() {
     setSessions(data.sessions || []);
   }
 
+  async function loadModels() {
+    const res = await fetch("/api/models");
+    const data = await res.json();
+    setModels((data.items || []).filter((x: ModelDef) => x.enabled));
+  }
+
   useEffect(() => {
     loadAgents();
     loadSessions();
+    loadModels();
     const i = setInterval(loadSessions, 2500);
     return () => clearInterval(i);
   }, []);
@@ -34,7 +44,7 @@ export default function DashboardPage() {
     const res = await fetch("/api/deepagents/oneshot", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ task, agent }),
+      body: JSON.stringify({ task, agent, model }),
     });
     const data = await res.json();
     setResult((data.stdout || data.stderr || data.error || "").toString());
@@ -44,7 +54,7 @@ export default function DashboardPage() {
     await fetch("/api/deepagents/sessions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ task, agent }),
+      body: JSON.stringify({ task, agent, model }),
     });
     await loadSessions();
   }
@@ -61,6 +71,12 @@ export default function DashboardPage() {
       <section className="rounded-xl bg-white p-4 shadow-sm">
         <h2 className="mb-2 font-medium">Exécuter une tâche</h2>
         <input value={agent} onChange={(e) => setAgent(e.target.value)} className="mb-2 w-full rounded border p-2" placeholder="Agent (optionnel, ex: coder)" />
+        <select value={model} onChange={(e) => setModel(e.target.value)} className="mb-2 w-full rounded border p-2">
+          <option value="">Modèle par défaut (settings)</option>
+          {models.map((m) => (
+            <option key={m.id} value={m.model}>{m.label} ({m.model})</option>
+          ))}
+        </select>
         <textarea value={task} onChange={(e) => setTask(e.target.value)} rows={4} className="w-full rounded border p-2" placeholder="Décris la tâche DeepAgent..." />
         <div className="mt-2 flex gap-2">
           <button onClick={runOneShot} className="rounded bg-zinc-900 px-3 py-2 text-white">Run one-shot</button>

@@ -18,10 +18,10 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     await requireAuth();
-    const { task, agent } = await req.json();
+    const { task, agent, model } = await req.json();
     if (!task) return NextResponse.json({ ok: false, error: "Task manquante" }, { status: 400 });
     const settings = await readJsonFile<AppSettings>("settings.json", defaults);
-    const s = runBackground(task, settings, { agent });
+    const s = runBackground(task, settings, { agent, model });
     return NextResponse.json({ ok: true, session: s });
   } catch (e) {
     if (e instanceof Error && e.message === "UNAUTHORIZED") return NextResponse.json({ ok: false }, { status: 401 });
